@@ -3,6 +3,13 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
+var GameObject = (function () {
+    function GameObject(x, y) {
+        this.x = x;
+        this.y = y;
+    }
+    return GameObject;
+}());
 var TitleScreenState = (function (_super) {
     __extends(TitleScreenState, _super);
     function TitleScreenState() {
@@ -19,6 +26,21 @@ var TitleScreenState = (function (_super) {
     };
     return TitleScreenState;
 }(Phaser.State));
+var Sun = (function (_super) {
+    __extends(Sun, _super);
+    function Sun(x, y, width, height, sprite, amount, game) {
+        _super.call(this, x, y);
+        this.game = game;
+        this.sprite = sprite;
+        this.amount = amount;
+        this.height = height;
+        this.width = width;
+    }
+    Sun.prototype.preload = function () {
+        this.game.load.image('sun', "assets/images/sun.png");
+    };
+    return Sun;
+}(GameObject));
 var TextBuilder = (function () {
     function TextBuilder() {
     }
@@ -26,10 +48,8 @@ var TextBuilder = (function () {
 }());
 var SimpleGame = (function () {
     function SimpleGame() {
-        this.water = 10;
-        this.sun = 10;
-        this.earth = 10;
         this.speed = 1;
+        this.sun = new Sun(20, 20, 30, 30, "assets/images/dog.png", 0, this.game);
         this.textStyle = { font: "20px Arial", fill: "#ff0044", align: "center" };
         this.game = new Phaser.Game(800, 600, Phaser.AUTO, 'content', { preload: this.preload.bind(this),
             create: this.create.bind(this),
@@ -38,8 +58,8 @@ var SimpleGame = (function () {
     }
     SimpleGame.prototype.preload = function () {
         this.game.load.image('dog', "assets/images/dog.png");
-        this.game.load.image('button', "assets/images/button.png");
-        this.game.load.image('sun', "assets/images/sun.png");
+        this.game.load.image('button', "assets/images/dog.png");
+        this.sun.preload();
     };
     SimpleGame.prototype.create = function () {
         this.setSunText();
@@ -53,7 +73,7 @@ var SimpleGame = (function () {
         this.game.time.events.loop(Phaser.Timer.SECOND, SimpleGame.prototype.updateCounter.bind(this), this);
     };
     SimpleGame.prototype.updateCounter = function () {
-        this.sun += this.speed;
+        this.sun.amount += this.speed;
         this.water += this.speed;
         this.earth += this.speed;
         this.showSunData();

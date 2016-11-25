@@ -4,9 +4,9 @@ class SimpleGame
 {
 	game:Phaser.Game;
 	textStyle:Object;
-	water:number = 10; 
-	sun:number = 10; 
-	earth:number = 10;
+	water:number; 
+	sun:Sun; 
+	earth:number;
 	coins:number; 
 	diamonds:number;
 	speed:number = 1;
@@ -18,6 +18,7 @@ class SimpleGame
 	
 	constructor()
 	{
+		this.sun = new Sun(20,20,30,30,"assets/images/dog.png",0, this.game);
 		this.textStyle = { font: "20px Arial", fill: "#ff0044", align: "center" };
 		this.game = new Phaser.Game(800, 600, Phaser.AUTO, 'content', { preload:this.preload.bind(this), 
 																		create:this.create.bind(this), 
@@ -28,14 +29,16 @@ class SimpleGame
 	preload()
 	{
 		this.game.load.image( 'dog', "assets/images/dog.png" );
-		this.game.load.image( 'button', "assets/images/button.png" );
-		this.game.load.image( 'sun', "assets/images/sun.png" );
+		this.game.load.image( 'button', "assets/images/dog.png" );
+		// this.game.load.image( 'sun', "assets/images/sun.png" );
+		this.sun.preload();
 	}
 
 	create()
 	{
 		this.setSunText();
 		var sun = this.game.add.sprite(20,10, 'sun');
+		//dfsafsdf
 		sun.width = 30;
 		sun.height = 30;
 		
@@ -47,7 +50,7 @@ class SimpleGame
 	} 
 
 	updateCounter(){
-		this.sun += this.speed;
+		this.sun.amount += this.speed;
 		this.water += this.speed;
 		this.earth += this.speed;
 		this.showSunData();

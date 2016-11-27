@@ -8,7 +8,7 @@ class MenuScreenState extends Phaser.State{
             titleScreenImage: Phaser.Sprite;
 
         preload() {
-            this.load.image("title", "assets/images/TitleScreen.png");
+            this.load.image("title", "TitleScreen.png");
         }
         create() {
             this.titleScreenImage = this.add.sprite(0, 0, "title");

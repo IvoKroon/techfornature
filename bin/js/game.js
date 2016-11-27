@@ -10,7 +10,7 @@ var MenuScreenState = (function (_super) {
         this.count = 0;
     }
     MenuScreenState.prototype.preload = function () {
-        this.load.image("title", "assets/images/TitleScreen.png");
+        this.load.image("title", "TitleScreen.png");
     };
     MenuScreenState.prototype.create = function () {
         this.titleScreenImage = this.add.sprite(0, 0, "title");
@@ -28,23 +28,65 @@ var RunningState = (function (_super) {
         this.speed = 1;
     }
     RunningState.prototype.preload = function () {
+        this.menuGroup = new GroupObject(this.game);
         this.load.image('water', "assets/images/dog.png");
         this.load.image('button', "assets/images/button.png");
         this.load.image('sun', "assets/images/sun.png");
         this.load.image('earth', "assets/images/sun.png");
+        this.load.image('button1', "assets/images/roundbutton.png");
+        this.load.image('button2', "assets/images/roundbutton2.png");
+        this.load.image('button3', "assets/images/roundbutton3.png");
+        this.load.image('button4', "assets/images/roundbutton4.png");
     };
     RunningState.prototype.create = function () {
+        this.game.scale.fullScreenScaleMode = Phaser.ScaleManager.EXACT_FIT;
+        this.game.scale.refresh();
         this.sun = new Sun(20, 20, 10, Sun.prototype.action, this.game);
         this.sun.setSizes(20, 20);
         this.earth = new Earth(20, 50, 10, Earth.prototype.action, this.game);
         this.earth.setSizes(20, 20);
         this.water = new Water(20, 80, 10, Water.prototype.action, this.game);
         this.water.setSizes(20, 20);
-        this.game.time.events.loop(Phaser.Timer.SECOND, RunningState.prototype.updateValues.bind(this), this);
+        this.menubutton = new ButtonObject(this.game, this.game.width - 30, this.game.height - 30, "button", this.toggleMenu.bind(this));
+        this.menubutton.anchor.set(0.5);
+        this.menuGroup.add(this.menubutton);
+        var fourth = this.game.width / 4;
+        var eigth = this.game.height / 8;
+        this.button = new ButtonObject(this.game, this.game.width - 30, this.game.height + 50, "button1", this.button1Click);
+        this.button.setSizes(fourth, eigth);
+        this.button.anchor.set(0.5);
+        this.menuGroup.add(this.button);
+        this.button2 = new ButtonObject(this.game, this.game.width - 30, this.game.height + 100, "button2", this.button2Click);
+        this.button2.setSizes(fourth, eigth);
+        this.button2.anchor.set(0.5);
+        this.menuGroup.add(this.button2);
+        this.button3 = new ButtonObject(this.game, this.game.width - 30, this.game.height + 150, "button3", this.button3Click);
+        this.button3.setSizes(fourth, eigth);
+        this.button3.anchor.set(0.5);
+        this.menuGroup.add(this.button3);
+        this.button4 = new ButtonObject(this.game, this.game.width - 30, this.game.height + 200, "button4", this.button4Click);
+        this.button4.setSizes(fourth, eigth);
+        this.button4.anchor.set(0.5);
+        this.menuGroup.add(this.button4);
+        console.log(this.menuGroup);
+        this.game.time.events.loop(Phaser.Timer.SECOND, this.updateValues.bind(this), this);
+    };
+    RunningState.prototype.toggleMenu = function () {
+        console.log(this.menuGroup);
+        if (this.menuGroup.y == 0) {
+            var menuTween = this.game.add.tween(this.menuGroup).to({
+                y: -250
+            }, 500, Phaser.Easing.Bounce.Out, true);
+        }
+        if (this.menuGroup.y == -250) {
+            var menuTween = this.game.add.tween(this.menuGroup).to({
+                y: 0
+            }, 500, Phaser.Easing.Bounce.Out, true);
+        }
     };
     RunningState.prototype.updateValues = function () {
         this.earth.amount += 5;
-        this.water.amount += 200;
+        this.water.amount += 20;
         this.sun.amount += 10;
     };
     RunningState.prototype.rewriteValues = function () {
@@ -53,6 +95,18 @@ var RunningState = (function (_super) {
     RunningState.prototype.setSunText = function () {
         var text = String(this.sun.amount);
         this.sunText = new TextObject(this.game, 100, 100, text, 100, "#ff0000");
+    };
+    RunningState.prototype.button1Click = function () {
+        this.game.stage.backgroundColor = "#ff0000";
+    };
+    RunningState.prototype.button2Click = function () {
+        this.game.stage.backgroundColor = "#21ff00";
+    };
+    RunningState.prototype.button3Click = function () {
+        this.game.stage.backgroundColor = "#0043ff";
+    };
+    RunningState.prototype.button4Click = function () {
+        this.game.stage.backgroundColor = "#ffff00";
     };
     RunningState.prototype.render = function () {
     };
@@ -63,7 +117,7 @@ var SimpleGame = (function () {
         this.game = new Phaser.Game(800, 600, Phaser.AUTO, 'content');
         this.game.state.add("MenuScreenState", MenuScreenState, false);
         this.game.state.add("RunningState", RunningState, false);
-        this.game.state.start("RunningState", true, true);
+        this.game.state.start("MenuScreenState", true, true);
     }
     return SimpleGame;
 }());
@@ -102,6 +156,13 @@ var GameSprite = (function (_super) {
     }
     return GameSprite;
 }(Phaser.Sprite));
+var GroupObject = (function (_super) {
+    __extends(GroupObject, _super);
+    function GroupObject() {
+        _super.apply(this, arguments);
+    }
+    return GroupObject;
+}(Phaser.Group));
 var ResourcesObject = (function (_super) {
     __extends(ResourcesObject, _super);
     function ResourcesObject(game, x, y, amount, key, callback) {

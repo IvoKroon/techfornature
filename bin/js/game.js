@@ -3,58 +3,68 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-var TitleScreenState = (function (_super) {
-    __extends(TitleScreenState, _super);
-    function TitleScreenState() {
-        _super.apply(this, arguments);
+var MenuScreenState = (function (_super) {
+    __extends(MenuScreenState, _super);
+    function MenuScreenState() {
+        _super.call(this);
         this.count = 0;
     }
-    TitleScreenState.prototype.create = function () {
-        this.startButton = this.game.add.button(this.game.world.centerX, 0, 'button', this.up, this, 2, 1, 0);
-        this.game.input.onDown.add(TitleScreenState.prototype.up, this);
+    MenuScreenState.prototype.preload = function () {
+        this.load.image("title", "assets/images/TitleScreen.png");
     };
-    TitleScreenState.prototype.up = function () {
-        this.count++;
-        console.log("up " + this.count);
+    MenuScreenState.prototype.create = function () {
+        this.titleScreenImage = this.add.sprite(0, 0, "title");
+        this.input.onTap.addOnce(this.titleClicked, this);
     };
-    return TitleScreenState;
+    MenuScreenState.prototype.titleClicked = function () {
+        this.game.state.start("RunningState");
+    };
+    return MenuScreenState;
 }(Phaser.State));
-var SimpleGame = (function () {
-    function SimpleGame() {
+var RunningState = (function (_super) {
+    __extends(RunningState, _super);
+    function RunningState() {
+        _super.call(this);
         this.speed = 1;
-        this.game = new Phaser.Game(800, 600, Phaser.AUTO, 'content', { preload: this.preload.bind(this),
-            create: this.create.bind(this),
-            render: this.render.bind(this) });
     }
-    SimpleGame.prototype.preload = function () {
-        this.game.load.image('water', "assets/images/dog.png");
-        this.game.load.image('button', "assets/images/button.png");
-        this.game.load.image('sun', "assets/images/sun.png");
-        this.game.load.image('earth', "assets/images/sun.png");
+    RunningState.prototype.preload = function () {
+        this.load.image('water', "assets/images/dog.png");
+        this.load.image('button', "assets/images/button.png");
+        this.load.image('sun', "assets/images/sun.png");
+        this.load.image('earth', "assets/images/sun.png");
     };
-    SimpleGame.prototype.create = function () {
+    RunningState.prototype.create = function () {
         this.sun = new Sun(20, 20, 10, Sun.prototype.action, this.game);
         this.sun.setSizes(20, 20);
         this.earth = new Earth(20, 50, 10, Earth.prototype.action, this.game);
         this.earth.setSizes(20, 20);
         this.water = new Water(20, 80, 10, Water.prototype.action, this.game);
         this.water.setSizes(20, 20);
-        this.game.time.events.loop(Phaser.Timer.SECOND, SimpleGame.prototype.updateValues.bind(this), this);
+        this.game.time.events.loop(Phaser.Timer.SECOND, RunningState.prototype.updateValues.bind(this), this);
     };
-    SimpleGame.prototype.updateValues = function () {
+    RunningState.prototype.updateValues = function () {
         this.earth.amount += 5;
-        this.water.amount += 2;
+        this.water.amount += 200;
         this.sun.amount += 10;
     };
-    SimpleGame.prototype.rewriteValues = function () {
+    RunningState.prototype.rewriteValues = function () {
         this.sunText.setText(String(this.sun.amount));
     };
-    SimpleGame.prototype.setSunText = function () {
+    RunningState.prototype.setSunText = function () {
         var text = String(this.sun.amount);
         this.sunText = new TextObject(this.game, 100, 100, text, 100, "#ff0000");
     };
-    SimpleGame.prototype.render = function () {
+    RunningState.prototype.render = function () {
     };
+    return RunningState;
+}(Phaser.State));
+var SimpleGame = (function () {
+    function SimpleGame() {
+        this.game = new Phaser.Game(800, 600, Phaser.AUTO, 'content');
+        this.game.state.add("MenuScreenState", MenuScreenState, false);
+        this.game.state.add("RunningState", RunningState, false);
+        this.game.state.start("RunningState", true, true);
+    }
     return SimpleGame;
 }());
 window.onload = function () {

@@ -1,9 +1,23 @@
-class TitleScreenState extends Phaser.State{
+class MenuScreenState extends Phaser.State{
     game: Phaser.Game;
     startButton: Phaser.Button;
     count:number = 0; 
+  constructor() {
+            super();
+        }
+            titleScreenImage: Phaser.Sprite;
 
-    create(){
+        preload() {
+            this.load.image("title", "assets/images/TitleScreen.png");
+        }
+        create() {
+            this.titleScreenImage = this.add.sprite(0, 0, "title");
+            this.input.onTap.addOnce(this.titleClicked,this); // <-- that um, this is extremely important
+        }
+        titleClicked (){
+            this.game.state.start("RunningState");
+        }
+ /*   create(){
         this.startButton = this.game.add.button(this.game.world.centerX, 0, 'button', this.up, this, 2, 1, 0);
         this.game.input.onDown.add(TitleScreenState.prototype.up, this);
         // this.titleScreenImage = this.add.sprite(0,0, "hammer");
@@ -14,11 +28,9 @@ class TitleScreenState extends Phaser.State{
         // );
     }
 
-
-
     up(){
         this.count++;
 		console.log("up " + this.count);
-	}
+	}*/
 
 }

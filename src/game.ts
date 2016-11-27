@@ -4,9 +4,11 @@ class SimpleGame
 {
 	game:Phaser.Game;
 	textStyle:Object;
-	water:number; 
+	//resourses
+	water:Water; 
 	sun:Sun; 
-	earth:number;
+	earth:Earth;
+
 	coins:number; 
 	diamonds:number;
 	speed:number = 1;
@@ -18,71 +20,57 @@ class SimpleGame
 	
 	constructor()
 	{
-		this.sun = new Sun(20,20,30,30,"assets/images/dog.png",0, this.game);
-		this.textStyle = { font: "20px Arial", fill: "#ff0044", align: "center" };
+		//setup the game
 		this.game = new Phaser.Game(800, 600, Phaser.AUTO, 'content', { preload:this.preload.bind(this), 
 																		create:this.create.bind(this), 
 																		render:this.render.bind(this)});
-		this.counter = 0;
 	}
 	
 	preload()
 	{
-		this.game.load.image( 'dog', "assets/images/dog.png" );
-		this.game.load.image( 'button', "assets/images/dog.png" );
-		// this.game.load.image( 'sun', "assets/images/sun.png" );
-		this.sun.preload();
+		//load the sprite of the resourses
+		this.game.load.image( 'water', "assets/images/dog.png" );
+		this.game.load.image( 'button', "assets/images/button.png" );
+		this.game.load.image( 'sun', "assets/images/sun.png");
+		this.game.load.image( 'earth', "assets/images/sun.png");
 	}
 
 	create()
 	{
-		this.setSunText();
-		var sun = this.game.add.sprite(20,10, 'sun');
-		//dfsafsdf
-		sun.width = 30;
-		sun.height = 30;
-		
-		var button = this.game.add.button(this.game.world.centerX , 450, 'button', SimpleGame.prototype.up.bind(this));
-		button.anchor.setTo(0.5, 0.5);
-		button.width = 300;
-		button.height = 100;
-		this.game.time.events.loop(Phaser.Timer.SECOND, SimpleGame.prototype.updateCounter.bind(this), this);
+		//this lines will build the resourse objects.
+		this.sun = new Sun(20,20,10, Sun.prototype.action, this.game);
+		this.sun.setSizes(20,20);
+
+		this.earth = new Earth(20,50,10, Earth.prototype.action,this.game);
+		this.earth.setSizes(20,20);
+
+		this.water = new Water(20,80,10, Water.prototype.action,this.game);
+		this.water.setSizes(20,20);
+
+		//this loop goes every second.
+		//and this will upscale the amount of earth, water and sun
+		this.game.time.events.loop(Phaser.Timer.SECOND, SimpleGame.prototype.updateValues.bind(this), this);
 	} 
 
-	updateCounter(){
-		this.sun.amount += this.speed;
-		this.water += this.speed;
-		this.earth += this.speed;
-		this.showSunData();
+	updateValues(){
+		this.earth.amount += 5;
+		this.water.amount += 2;
+		this.sun.amount += 10;
 	}
-	showSunData(){
-		this.sunText.setText(String(this.sun));
+	rewriteValues(){
+		this.sunText.setText(String(this.sun.amount));
 	}
-	setSunText(){
-		var text = String(this.sun)
-		var style = this.textStyle;
-		this.sunText = this.game.add.text(60, 30, text, style);
-		this.sunText.anchor.set(0.5);
-		this.sunText.tint = 0xff0000;
 
-		this.sunText.inputEnabled = true;
-	}
-	up(){
-		this.speed++;
-		console.log("speed = " + this.speed );
+	setSunText(){
+		var text = String(this.sun.amount)
+		this.sunText = new TextObject(this.game, 100, 100, text, 100,"#ff0000");
 	}
 
 	//user this for rendering
 	render(){
+		//
 	}
 
-	customText(text:string,color:string, fontsize:number, fontKind:string){
-		var font = fontsize + "px "+ fontKind;
-		var text = text;
-		var style = { font: font, fill: color, align: "center" };
-		var textbar = this.game.add.text(this.game.world.centerX, this.game.world.centerY, text, style);
-		textbar.anchor.set(0.5);
-	}
 }
 
 // when the page has finished loading, create our game

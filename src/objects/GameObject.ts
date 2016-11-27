@@ -1,4 +1,4 @@
-/// <reference path="../tsDefinitions/phaser.d.ts" />
+/// <reference path="../../tsDefinitions/phaser.d.ts" />
 
 class GameObject{
     public x:number;

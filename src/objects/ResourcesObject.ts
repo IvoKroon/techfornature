@@ -12,10 +12,11 @@ class ResourcesObject extends ButtonObject{
     }
 
     setValue(amount:number){
+        console.log("setting value");
         var x = this.x + 30;
         var y = this.y;
         var amountString = String(amount);
-        this.text = new TextObject(this.game, x, y, amountString, 15)
+        this.text = new TextObject(this.game, x, y, amountString, 15, "#000000")
     }
 
     updateValue(amount:number){

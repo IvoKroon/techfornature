@@ -1,4 +1,3 @@
-
 class RunningState extends Phaser.State{
 	textStyle:Object;
 	//resourses
@@ -14,21 +13,18 @@ class RunningState extends Phaser.State{
 	
 	counter:number;
 
-	menubutton:ButtonObject;
 	button:ButtonObject;
 	button2:ButtonObject;
 	button3:ButtonObject;
 	button4:ButtonObject;
 
-	menuGroup:Phaser.Group; // maakt var van groep phaser..
 	
 	  constructor() {
             super();
+		
         }
         	preload()
 	{
-		this.menuGroup = new GroupObject(this.game); // maakt nieuwe groep aan op phaser.group manier. 
-
 		//load the sprite of the resourses
 		this.load.image( 'water', "assets/images/dog.png" );
 		this.load.image( 'button', "assets/images/button.png" );
@@ -39,7 +35,7 @@ class RunningState extends Phaser.State{
 		this.load.image( 'button3', "assets/images/roundbutton3.png");
 		this.load.image( 'button4', "assets/images/roundbutton4.png");
 	}
-	
+
 	create()
 	{
 	
@@ -57,57 +53,42 @@ class RunningState extends Phaser.State{
 		this.water = new Water(20,80,10, Water.prototype.action,this.game);
 		this.water.setSizes(20,20);
 
-		this.menubutton = new ButtonObject(this.game,this.game.width - 30, this.game.height - 30,"button", this.toggleMenu.bind(this)) // bind zorgt ervoor dat je in de functie nog bij je menugroep item kan.
-        this.menubutton.anchor.set(0.5);
-	    this.menuGroup.add(this.menubutton);  // voeg zo alle knopjes in de array.
-
+		/*
+	    var menuButton = this.game.add.button(this.game.width - 30, this.game.height - 30, "button", this.toggleMenu);
+        menuButton.anchor.set(0.5);
+		menuGroup.add(menuButton); */
 		
 		var fourth = this.game.width / 4; // een vierde van de game grote
 		var eigth = this.game.height /8; // 1/8
-		this.button = new ButtonObject(this.game,this.game.width - 30,	this.game.height + 50, "button1", this.button1Click); // nieuw button object die nog nergens staat maar button1 als plaatje gebruikt en button1click fnctie uitvoert op click.
+		this.button = new ButtonObject(this.game,0,	0, "button1", this.button1Click); // nieuw button object die nog nergens staat maar button1 als plaatje gebruikt en button1click fnctie uitvoert op click.
 		this.button.setSizes(fourth,eigth); // zet knop grote 1 4e breed en 1 8e hoog
-		this.button.anchor.set(0.5);
+		var bh = this.button.height; // waarde voor huidige grote van knop
+		this.button.position.x =  0; // begin deze knop bij 0 pixels links
+		this.button.position.y = this.game.height - bh; // zet deze knop zo laag mogelijk maar nog wel hoog genoeg om zijn eigen hoogte bh. te tonen
 		
-	    this.menuGroup.add(this.button); 
-
-		this.button2 = new ButtonObject(this.game,this.game.width - 30,	this.game.height + 100, "button2", this.button2Click); 
+		this.button2 = new ButtonObject(this.game,0,	0, "button2", this.button2Click); 
 		this.button2.setSizes(fourth,eigth);
-		this.button2.anchor.set(0.5);
-		this.menuGroup.add(this.button2); 
+		this.button2.position.x =  fourth  ; // zelfde als boven maar begin knop bij 1/4e
+		this.button2.position.y = this.game.height - bh;
 
-		this.button3 = new ButtonObject(this.game,this.game.width - 30,	this.game.height + 150, "button3", this.button3Click);
+		this.button3 = new ButtonObject(this.game,0,	0, "button3", this.button3Click);
 		this.button3.setSizes(fourth,eigth);
-		this.button3.anchor.set(0.5);
-	    this.menuGroup.add(this.button3); 
+		this.button3.position.x =  this.game.width / 2  ; // op helft
+		this.button3.position.y = this.game.height - bh;	
 
-		this.button4 = new ButtonObject(this.game,this.game.width - 30,	this.game.height + 200, "button4", this.button4Click);
+		this.button4 = new ButtonObject(this.game,0,	0, "button4", this.button4Click);
 		this.button4.setSizes(fourth,eigth);
-		this.button4.anchor.set(0.5);
-		this.menuGroup.add(this.button4); 
-		console.log(this.menuGroup);
+		this.button4.position.x =  this.game.width - this.button4.width  ; // begin bij einde maar min eigen breedte om nog te tonen
+		this.button4.position.y = this.game.height - bh;	
 		//this loop goes every second.
 		//and this will upscale the amount of earth, water and sun
-		this.game.time.events.loop(Phaser.Timer.SECOND, this.updateValues.bind(this), this);
+		this.game.time.events.loop(Phaser.Timer.SECOND, RunningState.prototype.updateValues.bind(this), this);
 	} 
- toggleMenu(){
-	console.log(this.menuGroup);
-     if(this.menuGroup.y == 0){
-          var menuTween = this.game.add.tween(this.menuGroup).to({
-               y: -250     
-          }, 500, Phaser.Easing.Bounce.Out, true);
-     }
-     if(this.menuGroup.y == -250){
-          var menuTween = this.game.add.tween(this.menuGroup).to({
-               y: 0    
-          }, 500, Phaser.Easing.Bounce.Out, true);     
-     }
-}
+
 	updateValues(){
 		this.earth.amount += 5;
 		this.water.amount += 20;
 		this.sun.amount += 10;
-
-		
 	}
 	rewriteValues(){
 		this.sunText.setText(String(this.sun.amount));
